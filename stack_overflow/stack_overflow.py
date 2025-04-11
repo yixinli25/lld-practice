@@ -79,12 +79,16 @@ class Question(Votable, Commentable):
         self.answers.append(answer)
 
     def vote(self, user, value):
-        if value not in [-1, 1]:
-            raise Exception("Invalid vote value!")
-        self.votes[user] = value
+        if not Vote.is_valid_vote(value):
+            raise Exception("Invaild vote value")
+        
+        if user in self.votes and self.votes[user].value == value:
+            raise Exception("The user already voted.")
+        
+        self.votes[user] = Vote(user, value)
 
     def get_vote_count(self):
-        return sum(v for _, v in self.votes.items())
+        return sum(v.value for v in self.votes.values())
     
     def add_comment(self, comment):
         self.comments.append(comment)
@@ -104,12 +108,16 @@ class Answer(Votable, Commentable):
         self.is_accepted = False
 
     def vote(self, user, value):
-        if value not in [-1, 1]:
-            raise Exception("Invalid vote value!")
-        self.votes[user] = value
+        if not Vote.is_valid_vote(value):
+            raise Exception("Invaild vote value")
+        
+        if user in self.votes and self.votes[user].value == value:
+            raise Exception("The user already voted.")
+        
+        self.votes[user] = Vote(user, value)
 
     def get_vote_count(self):
-        return sum(v for _, v in self.votes.items())
+        return sum(v.value for v in self.votes.values())
     
     def add_comment(self, comment):
         self.comments.append(comment)
@@ -140,6 +148,10 @@ class Vote:
     def __init__(self, user, value):
         self.user = user
         self.value = value
+
+    @staticmethod
+    def is_valid_vote(value):
+        return value in [1, -1]
 
 class Comment:
     def __init__(self, author, content):
