@@ -9,7 +9,13 @@ class Signal(Enum):
     GREEN = 3
 
 class TrafficLight:
-    def __init__(self, id: int, red_duration: int, yellow_duration: int, green_duration: int):
+    def __init__(
+        self, 
+        id: int, 
+        red_duration: int, 
+        yellow_duration: int, 
+        green_duration: int
+    ):
         self.id = id
         self.red_duration = red_duration
         self.yellow_duration = yellow_duration
@@ -58,7 +64,7 @@ class TrafficController:
         self.roads[road.get_id()] = road
 
     def remove_road(self, road: Road):
-        if road not in self.roads:
+        if road.get_id() not in self.roads:
             raise Exception("Road not found")
         
         del self.roads[road.get_id()]
@@ -66,7 +72,7 @@ class TrafficController:
     def start_traffic_control(self):
         for road in self.roads.values():
             traffic_light = road.get_traffic_light()
-            threading.Thread(target=self._control_traffic_light, args=(traffic_light,), daemon=True).start()
+            threading.Thread(target=self._control_traffic_light, args=(traffic_light), daemon=True).start()
 
     def _control_traffic_light(self, traffic_light: TrafficLight):
         while True:
