@@ -18,7 +18,7 @@ class Card:
     def get_card_number(self):
         return self.card_number
     
-    def get_poin(self):
+    def get_pin(self):
         return self.pin
     
 
